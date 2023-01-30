@@ -42,6 +42,27 @@ func workspaceDataSource() *schema.Resource {
 			}
 			_ = rd.Set("owner_id", ownerID)
 
+			disk := os.Getenv("GIGO_WORKSPACE_DISK")
+			if disk == "" {
+				// default to 15GiB
+				disk = "15Gi"
+			}
+			_ = rd.Set("disk", disk)
+
+			cpu := os.Getenv("GIGO_WORKSPACE_CPU")
+			if cpu == "" {
+				// default to 4 cores
+				cpu = "4"
+			}
+			_ = rd.Set("cpu", cpu)
+
+			mem := os.Getenv("GIGO_WORKSPACE_MEM")
+			if mem == "" {
+				// default to 4GB
+				mem = "4G"
+			}
+			_ = rd.Set("mem", mem)
+
 			id := os.Getenv("GIGO_WORKSPACE_ID")
 			if id == "" {
 				id = uuid.NewString()

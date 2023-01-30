@@ -13,6 +13,9 @@ import (
 func TestWorkspace(t *testing.T) {
 	t.Setenv("GIGO_WORKSPACE_OWNER", "owner123")
 	t.Setenv("GIGO_WORKSPACE_OWNER_EMAIL", "owner123@example.com")
+	t.Setenv("GIGO_WORKSPACE_DISK", "50Gi")
+	t.Setenv("GIGO_WORKSPACE_CPU", "8")
+	t.Setenv("GIGO_WORKSPACE_MEM", "16G")
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]*schema.Provider{
@@ -39,6 +42,9 @@ func TestWorkspace(t *testing.T) {
 				require.Equal(t, "8080", attribs["access_port"])
 				require.Equal(t, "owner123", attribs["owner"])
 				require.Equal(t, "owner123@example.com", attribs["owner_email"])
+				require.Equal(t, "50Gi", attribs["disk"])
+				require.Equal(t, "8", attribs["cpu"])
+				require.Equal(t, "16G", attribs["mem"])
 				return nil
 			},
 		}},
@@ -68,6 +74,9 @@ func TestWorkspace(t *testing.T) {
 				require.Equal(t, "https://example.com:8080", attribs["access_url"])
 				require.Equal(t, "owner123", attribs["owner"])
 				require.Equal(t, "owner123@example.com", attribs["owner_email"])
+				require.Equal(t, "50Gi", attribs["disk"])
+				require.Equal(t, "8", attribs["cpu"])
+				require.Equal(t, "16G", attribs["mem"])
 				return nil
 			},
 		}},

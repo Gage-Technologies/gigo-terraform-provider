@@ -63,6 +63,12 @@ func workspaceDataSource() *schema.Resource {
 			}
 			_ = rd.Set("mem", mem)
 
+			container := os.Getenv("GIGO_WORKSPACE_CONTAINER")
+			if container == "" {
+				container = "codercom/enterprise-base:ubuntu"
+			}
+			_ = rd.Set("container", container)
+
 			id := os.Getenv("GIGO_WORKSPACE_ID")
 			if id == "" {
 				id = uuid.NewString()
@@ -140,6 +146,11 @@ func workspaceDataSource() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "CPU core count for the workspace.",
+			},
+			"container": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Container that the workspace will built in.",
 			},
 			"id": {
 				Type:        schema.TypeString,

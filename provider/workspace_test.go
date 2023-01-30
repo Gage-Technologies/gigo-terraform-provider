@@ -16,6 +16,7 @@ func TestWorkspace(t *testing.T) {
 	t.Setenv("GIGO_WORKSPACE_DISK", "50Gi")
 	t.Setenv("GIGO_WORKSPACE_CPU", "8")
 	t.Setenv("GIGO_WORKSPACE_MEM", "16G")
+	t.Setenv("GIGO_WORKSPACE_CONTAINER", "test")
 
 	resource.Test(t, resource.TestCase{
 		Providers: map[string]*schema.Provider{
@@ -45,6 +46,7 @@ func TestWorkspace(t *testing.T) {
 				require.Equal(t, "50Gi", attribs["disk"])
 				require.Equal(t, "8", attribs["cpu"])
 				require.Equal(t, "16G", attribs["mem"])
+				require.Equal(t, "test", attribs["container"])
 				return nil
 			},
 		}},
@@ -77,6 +79,7 @@ func TestWorkspace(t *testing.T) {
 				require.Equal(t, "50Gi", attribs["disk"])
 				require.Equal(t, "8", attribs["cpu"])
 				require.Equal(t, "16G", attribs["mem"])
+				require.Equal(t, "test", attribs["container"])
 				return nil
 			},
 		}},

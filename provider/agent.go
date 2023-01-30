@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/bwmarrin/snowflake"
 	"os"
 	"reflect"
 	"strings"
@@ -17,9 +18,20 @@ func agentResource() *schema.Resource {
 	return &schema.Resource{
 		Description: "Use this resource to associate an agent.",
 		CreateContext: func(c context.Context, resourceData *schema.ResourceData, i interface{}) diag.Diagnostics {
+			// create a new snowflake node using 1022 as the node id
+			// this is a reserved node id in the gigo system for provisioners
+			sf, err := snowflake.NewNode(1022)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+
+			// generate a new id from the snowflake node
+			// NOTE: we switched from uuid to snowflake to maintain
+			// compatibility with the gigo systems existing id system
+			resourceData.SetId(sf.Generate().String())
+
 			// This should be a real authentication token!
-			resourceData.SetId(uuid.NewString())
-			err := resourceData.Set("token", uuid.NewString())
+			err = resourceData.Set("token", uuid.NewString())
 			if err != nil {
 				return diag.FromErr(err)
 			}

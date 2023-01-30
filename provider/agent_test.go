@@ -36,6 +36,7 @@ func TestAgent(t *testing.T) {
 					"token",
 					"os",
 					"arch",
+					"id",
 				} {
 					value := resource.Primary.Attributes[key]
 					t.Logf("%q = %q", key, value)

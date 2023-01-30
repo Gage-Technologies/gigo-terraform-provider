@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/coder/terraform-provider-coder/provider"
+	"github.com/gage-technologies/gigo-terraform-provider/provider"
 )
 
 func TestProvider(t *testing.T) {

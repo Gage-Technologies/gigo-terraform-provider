@@ -15,7 +15,7 @@ func workspaceDataSource() *schema.Resource {
 	return &schema.Resource{
 		Description: "Use this data source to get information for the active workspace build.",
 		ReadContext: func(c context.Context, rd *schema.ResourceData, i interface{}) diag.Diagnostics {
-			transition := os.Getenv("CODER_WORKSPACE_TRANSITION")
+			transition := os.Getenv("GIGO_WORKSPACE_TRANSITION")
 			if transition == "" {
 				// Default to start!
 				transition = "start"
@@ -27,28 +27,22 @@ func workspaceDataSource() *schema.Resource {
 			}
 			_ = rd.Set("start_count", count)
 
-			owner := os.Getenv("CODER_WORKSPACE_OWNER")
+			owner := os.Getenv("GIGO_WORKSPACE_OWNER")
 			if owner == "" {
 				owner = "default"
 			}
 			_ = rd.Set("owner", owner)
 
-			ownerEmail := os.Getenv("CODER_WORKSPACE_OWNER_EMAIL")
+			ownerEmail := os.Getenv("GIGO_WORKSPACE_OWNER_EMAIL")
 			_ = rd.Set("owner_email", ownerEmail)
 
-			ownerID := os.Getenv("CODER_WORKSPACE_OWNER_ID")
+			ownerID := os.Getenv("GIGO_WORKSPACE_OWNER_ID")
 			if ownerID == "" {
 				ownerID = uuid.Nil.String()
 			}
 			_ = rd.Set("owner_id", ownerID)
 
-			name := os.Getenv("CODER_WORKSPACE_NAME")
-			if name == "" {
-				name = "default"
-			}
-			rd.Set("name", name)
-
-			id := os.Getenv("CODER_WORKSPACE_ID")
+			id := os.Getenv("GIGO_WORKSPACE_ID")
 			if id == "" {
 				id = uuid.NewString()
 			}
@@ -79,12 +73,12 @@ func workspaceDataSource() *schema.Resource {
 			"access_url": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The access URL of the Coder deployment provisioning this workspace.",
+				Description: "The access URL of the Gigo deployment provisioning this workspace.",
 			},
 			"access_port": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "The access port of the Coder deployment provisioning this workspace.",
+				Description: "The access port of the Gigo deployment provisioning this workspace.",
 			},
 			"start_count": {
 				Type:        schema.TypeInt,
@@ -109,17 +103,27 @@ func workspaceDataSource() *schema.Resource {
 			"owner_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "UUID of the workspace owner.",
+				Description: "ID of the workspace owner.",
+			},
+			"disk": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Disk size of the volume mount.",
+			},
+			"mem": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Memory size fot the workspace.",
+			},
+			"cpu": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "CPU core count for the workspace.",
 			},
 			"id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "UUID of the workspace.",
-			},
-			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Name of the workspace.",
+				Description: "ID of the workspace.",
 			},
 		},
 	}

@@ -1,3 +1,5 @@
-# terraform-provider-coder
+# gigo-terraform-provider
 
-See [Coder](https://github.com/coder/coder).
+Terraform provider for workspaces on the gigo platform
+
+Forked from [Coder](https://github.com/coder/coder).

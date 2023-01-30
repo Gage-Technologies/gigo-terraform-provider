@@ -1,4 +1,4 @@
-module github.com/coder/terraform-provider-coder
+module github.com/gage-technologies/gigo-terraform-provider
 
 go 1.17
 

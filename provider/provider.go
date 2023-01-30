@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"golang.org/x/xerrors"
 )
 
 type config struct {
@@ -22,11 +21,11 @@ func New() *schema.Provider {
 		Schema: map[string]*schema.Schema{
 			"url": {
 				Type:        schema.TypeString,
-				Description: "The URL to access Coder.",
+				Description: "The URL to access Gigo Core.",
 				Optional:    true,
-				// The "CODER_AGENT_URL" environment variable is used by default
+				// The "GIGO_AGENT_URL" environment variable is used by default
 				// as the Access URL when generating scripts.
-				DefaultFunc: schema.EnvDefaultFunc("CODER_AGENT_URL", "https://mydeployment.coder.com"),
+				DefaultFunc: schema.EnvDefaultFunc("GIGO_AGENT_URL", "https://gigo.dev"),
 				ValidateFunc: func(i interface{}, s string) ([]string, []error) {
 					_, err := url.Parse(s)
 					if err != nil {
@@ -42,7 +41,7 @@ func New() *schema.Provider {
 				return nil, diag.Errorf("unexpected type %q for url", reflect.TypeOf(resourceData.Get("url")).String())
 			}
 			if rawURL == "" {
-				return nil, diag.Errorf("CODER_AGENT_URL must not be empty; got %q", rawURL)
+				return nil, diag.Errorf("GIGO_AGENT_URL must not be empty; got %q", rawURL)
 			}
 			parsed, err := url.Parse(resourceData.Get("url").(string))
 			if err != nil {
@@ -61,57 +60,13 @@ func New() *schema.Provider {
 			}, nil
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"coder_workspace":   workspaceDataSource(),
-			"coder_provisioner": provisionerDataSource(),
-			"coder_parameter":   parameterDataSource(),
+			"gigo_workspace":   workspaceDataSource(),
+			"gigo_provisioner": provisionerDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"coder_agent":          agentResource(),
-			"coder_agent_instance": agentInstanceResource(),
-			"coder_app":            appResource(),
-			"coder_metadata":       metadataResource(),
+			"gigo_agent": agentResource(),
 		},
 	}
-}
-
-// populateIsNull reads the raw plan for a coder_metadata resource being created,
-// figures out which items have null "value"s, and augments them by setting the
-// "is_null" field to true. This ugly hack is necessary because terraform-plugin-sdk
-// is designed around a old version of Terraform that didn't support nullable fields,
-// and it doesn't correctly propagate null values for primitive types.
-// Returns an interface{} representing the new value of the "item" field, or an error.
-func populateIsNull(resourceData *schema.ResourceData) (result interface{}, err error) {
-	// The cty package reports type mismatches by panicking
-	defer func() {
-		if r := recover(); r != nil {
-			err = xerrors.Errorf("panic while handling coder_metadata: %#v", r)
-		}
-	}()
-
-	rawPlan := resourceData.GetRawPlan()
-	items := rawPlan.GetAttr("item").AsValueSlice()
-
-	var resultItems []interface{}
-	itemKeys := map[string]struct{}{}
-	for _, item := range items {
-		key := valueAsString(item.GetAttr("key"))
-		_, exists := itemKeys[key]
-		if exists {
-			return nil, xerrors.Errorf("duplicate metadata key %q", key)
-		}
-		itemKeys[key] = struct{}{}
-		resultItem := map[string]interface{}{
-			"key":       key,
-			"value":     valueAsString(item.GetAttr("value")),
-			"sensitive": valueAsBool(item.GetAttr("sensitive")),
-		}
-		if item.GetAttr("value").IsNull() {
-			resultItem["is_null"] = true
-		}
-		resultItems = append(resultItems, resultItem)
-	}
-
-	return resultItems, nil
 }
 
 // valueAsString takes a cty.Value that may be a string or null, and converts it to a Go string,
@@ -131,12 +86,4 @@ func valueAsBool(value cty.Value) interface{} {
 		return nil
 	}
 	return value.True()
-}
-
-// errorAsDiagnostic transforms a Go error to a diag.Diagnostics object representing a fatal error.
-func errorAsDiagnostics(err error) diag.Diagnostics {
-	return []diag.Diagnostic{{
-		Severity: diag.Error,
-		Summary:  err.Error(),
-	}}
 }

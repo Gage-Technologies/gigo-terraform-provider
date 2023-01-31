@@ -7,12 +7,12 @@ gen:
 	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest
 
 build:
-	go build -o bin/gigo-provider
+	CGO_ENABLED=0 go build -trimpath -ldflags '-s -w' -o bin/terraform-provider-gigo
 
 build-dev:
 	make build
-	mkdir -p ~/.terraform.d/plugins/gigo.dev/gigo/gigo-dev/lastest/
-	cp bin/gigo-provider ~/.terraform.d/plugins/gigo.dev/gigo/gigo-dev/lastest/linux_amd64
+	mkdir -p ~/.terraform.d/plugins/terraform.local/gigo/gigo/0.0.1/linux_amd64/
+	cp bin/terraform-provider-gigo ~/.terraform.d/plugins/terraform.local/gigo/gigo/0.0.1/linux_amd64/
 
 # Run acceptance tests
 .PHONY: testacc

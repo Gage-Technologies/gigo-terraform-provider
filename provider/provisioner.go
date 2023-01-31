@@ -11,7 +11,7 @@ import (
 
 func provisionerDataSource() *schema.Resource {
 	return &schema.Resource{
-		Description: "Use this data source to get information about the Coder provisioner.",
+		Description: "Use this data source to get information about the Gigo provisioner.",
 		ReadContext: func(c context.Context, rd *schema.ResourceData, i interface{}) diag.Diagnostics {
 			rd.SetId(uuid.NewString())
 			rd.Set("os", runtime.GOOS)

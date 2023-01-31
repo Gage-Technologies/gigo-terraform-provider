@@ -28,6 +28,7 @@ resource "kubernetes_pod" "dev" {
 
 - `access_port` (Number) The access port of the Gigo deployment provisioning this workspace.
 - `access_url` (String) The access URL of the Gigo deployment provisioning this workspace.
+- `container` (String) Container that the workspace will built in.
 - `cpu` (String) CPU core count for the workspace.
 - `disk` (String) Disk size of the volume mount.
 - `id` (String) ID of the workspace.

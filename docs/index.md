@@ -33,13 +33,13 @@ data "gigo_workspace" "me" {
 }
 
 resource "gigo_agent" "main" {
-  arch           = data.gigo_provisioner.me.arch
-  os             = "linux"
+  arch = data.gigo_provisioner.me.arch
+  os   = data.gigo_provisioner.me.os
 }
 
 resource "kubernetes_persistent_volume_claim" "home" {
   metadata {
-    name      = "gigo-ws-${lower(data.gigo_workspace.me.owner)}-${lower(data.gigo_workspace.me.name)}-home"
+    name      = "gigo-ws-${data.gigo_workspace.me.owner_id}-${data.gigo_workspace.me.id}-home"
     namespace = "gigo"
   }
   wait_until_bound = false
@@ -70,8 +70,8 @@ resource "k8s_core_v1_pod" "main" {
       fsgroup    = 0
     }
     containers {
-      name    = "dev"
-      image   = "codercom/enterprise-base"
+      name  = "dev"
+      image = "codercom/enterprise-base"
       command = ["sh", "-c", <<EOF
       # create user
       echo "Creaing gigo user"
@@ -150,6 +150,6 @@ resource "k8s_core_v1_pod" "main" {
 
 ## Attribution
 Forked from [Coder](https://github.com/coder/coder).
-If you've never heard of Coder check them out! They have an
+If you've never heard of Coder check them out, they have an
 incredible platform! We'd love to tell you more but we don't
 want to botch the pitch so just hear it from them @ https://coder.com/
